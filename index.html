@@ -1,0 +1,158 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Stretch Trailer">
+<link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon180.png">
+<title>Cruz's Stretch Trailer</title>
+<style>
+*{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#000;touch-action:none;font-family:-apple-system,Arial Rounded MT Bold,sans-serif}
+canvas{display:block}
+.btn{position:fixed;width:100px;height:100px;border-radius:26px;border:5px solid #fff;color:#fff;font-weight:900;font-size:20px;display:flex;align-items:center;justify-content:center;text-align:center;box-shadow:0 6px 0 rgba(0,0,0,.35);opacity:.92;z-index:10}
+.btn.on{transform:translateY(4px);box-shadow:none}
+#L{left:calc(14px + env(safe-area-inset-left));bottom:calc(18px + env(safe-area-inset-bottom));background:#2a7de1}
+#R{left:calc(128px + env(safe-area-inset-left));bottom:calc(18px + env(safe-area-inset-bottom));background:#2a7de1}
+#G{right:calc(14px + env(safe-area-inset-right));bottom:calc(18px + env(safe-area-inset-bottom));background:#ffd400;color:#333}
+#B{right:calc(128px + env(safe-area-inset-right));bottom:calc(18px + env(safe-area-inset-bottom));background:#e33}
+#H{right:calc(14px + env(safe-area-inset-right));bottom:calc(132px + env(safe-area-inset-bottom));background:#ff8c00}
+#A{right:calc(128px + env(safe-area-inset-right));bottom:calc(132px + env(safe-area-inset-bottom));background:#16a34a;font-size:18px}
+#S{top:calc(12px + env(safe-area-inset-top));right:calc(14px + env(safe-area-inset-right));background:#8a2be2}
+
+
+@media (max-width:520px){
+#L{bottom:calc(132px + env(safe-area-inset-bottom))}
+#R{left:auto;right:calc(14px + env(safe-area-inset-right));bottom:calc(132px + env(safe-area-inset-bottom))}
+#B{right:auto;left:calc(14px + env(safe-area-inset-left))}
+#H{right:auto;left:50%;margin-left:-50px;bottom:calc(18px + env(safe-area-inset-bottom))}
+#A{right:auto;left:50%;margin-left:-50px;bottom:calc(132px + env(safe-area-inset-bottom))}
+
+
+#hud{top:calc(84px + env(safe-area-inset-top))}
+#banner{left:calc(14px + env(safe-area-inset-left));right:calc(128px + env(safe-area-inset-right));font-size:17px}}
+@media (max-height:360px) and (min-width:521px){
+.btn{width:84px;height:84px;font-size:17px;border-radius:22px}
+#L,#R,#G,#B{bottom:calc(10px + env(safe-area-inset-bottom))}
+#R{left:calc(108px + env(safe-area-inset-left))}#B{right:calc(108px + env(safe-area-inset-right))}
+#H,#A{bottom:calc(104px + env(safe-area-inset-bottom))}#A{right:calc(108px + env(safe-area-inset-right));font-size:15px}
+
+#S{top:calc(8px + env(safe-area-inset-top))}}
+#hud{position:fixed;top:calc(64px + env(safe-area-inset-top));left:calc(14px + env(safe-area-inset-left));color:#fff;font-size:20px;font-weight:900;text-shadow:0 2px 3px #000;pointer-events:none;max-width:calc(100% - 150px);z-index:5}
+#banner{position:fixed;top:calc(12px + env(safe-area-inset-top));left:calc(128px + env(safe-area-inset-left));right:calc(128px + env(safe-area-inset-right));text-align:center;color:#ffd400;font-size:clamp(15px,3.2vw,24px);font-weight:900;line-height:1.15;-webkit-text-stroke:1px #1a1a40;text-shadow:0 2px 0 #1a1a40,0 3px 6px #000;pointer-events:none;z-index:6}
+#tname{font-size:clamp(36px,9vw,80px);line-height:1.08;color:#ffd400;-webkit-text-stroke:2px #1a1a40;text-shadow:0 4px 0 #1a1a40,0 6px 12px rgba(0,0,0,.5);max-width:95vw;overflow-wrap:break-word}
+#dim{position:fixed;inset:0;background:#000014;opacity:0;pointer-events:none;transition:opacity .8s;display:flex;align-items:center;justify-content:center;color:#fff;font-size:80px;font-weight:900;z-index:20}
+#title{position:fixed;inset:0;z-index:99999;overflow:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(#5bc0ff,#9be15d);color:#fff;text-shadow:0 3px 0 #1d4f9c;text-align:center;font-size:40px;font-weight:900;padding:20px}
+#title button{flex:none;min-width:240px;min-height:100px;margin-top:28px;font-size:44px;padding:24px 56px;border-radius:30px;border:6px solid #fff;background:#ffd400;color:#333;font-weight:900}
+a[href*="netlify"],#netlify-badge,[class*="netlify-badge"],iframe[src*="netlify"],#nl-badge-frame,iframe[title*="Netlify"]{display:none!important}
+</style></head><body>
+<div id="banner">Cruz's Stretch Trailer</div><div id="hud"></div>
+<div class="btn" id="L">◀ LEFT</div><div class="btn" id="R">RIGHT ▶</div>
+<div class="btn" id="G">GO</div><div class="btn" id="B">BACK</div><div class="btn" id="H">HITCH 🔗</div><div class="btn" id="S">OUT 🚶</div><div class="btn" id="A">GROW ↔️</div>
+<div id="title"><div id="tname">Cruz's Stretch Trailer</div><div style="font-size:70px">🚛 ↔️ 🏍️ 🏠</div><button id="play">PLAY ▶</button></div>
+<script>
+(function(){var t=document.getElementById('title'),b=document.getElementById('play');
+function go(e){if(e)e.preventDefault();t.style.display='none';if(window.__onPlay)window.__onPlay()}
+b.addEventListener('touchend',go,{passive:false});b.addEventListener('click',go);})();
+</script>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+const R=new THREE.WebGLRenderer({antialias:true});R.setPixelRatio(Math.min(devicePixelRatio,2));document.body.prepend(R.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x8fd3ff);scene.fog=new THREE.Fog(0x8fd3ff,120,260);
+const cam=new THREE.PerspectiveCamera(60,1,.1,500);
+function rs(){R.setSize(innerWidth,innerHeight);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()}addEventListener('resize',rs);rs();
+scene.add(new THREE.HemisphereLight(0xffffff,0x66aa44,1.1));const sun=new THREE.DirectionalLight(0xffffff,1.2);sun.position.set(40,80,20);scene.add(sun);
+const M=c=>new THREE.MeshLambertMaterial({color:c});
+const box=(w,h,d,c,p)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),M(c));p&&p.add(m);return m};
+const wheel=(r,w,p,x,y,z)=>{const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,w,20),M(0x222222));m.rotation.z=Math.PI/2;m.position.set(x,y,z);p.add(m);return m};
+const g=new THREE.Mesh(new THREE.PlaneGeometry(600,600),M(0x7ccf4f));g.rotation.x=-Math.PI/2;scene.add(g);
+const dirt=new THREE.Mesh(new THREE.CircleGeometry(30,40),M(0xb98a52));dirt.rotation.x=-Math.PI/2;dirt.position.y=.01;scene.add(dirt);
+for(let i=0;i<30;i++){const a=i*0.7,r=70+(i*37%60),t=new THREE.Group();box(1,3,1,0x8b5a2b,t).position.y=1.5;const top=new THREE.Mesh(new THREE.SphereGeometry(2.6,10,8),M(0x2e9e3e));top.position.y=4.6;t.add(top);t.position.set(Math.cos(a)*r,0,Math.sin(a)*r);scene.add(t)}
+// SEMI (red)
+const S={x:0,z:0,h:0,v:0},semi=new THREE.Group();scene.add(semi);
+box(2.6,1,7,0x333333,semi).position.set(0,1,0);box(2.8,2.6,2.6,0xd62828,semi).position.set(0,2.6,2);box(2.6,1.4,1.6,0xd62828,semi).position.set(0,1.9,3.8);
+box(2.5,1,.1,0x99ddff,semi).position.set(0,3.3,3.32);box(2.4,.3,.1,0xcccccc,semi).position.set(0,1.6,4.62);
+for(const sx of[-1,1]){const st=box(.3,3.5,.3,0xcccccc,semi);st.position.set(sx*1.5,3.5,.6)}
+box(2.2,.2,2,0x555555,semi).position.set(0,1.6,-2.3);
+for(const z of[3,-1.5,-3])for(const sx of[-1.3,1.3])wheel(.75,.6,semi,sx,.75,z);
+// TRAILER: one center wheel, stretchy deck
+const FIT=4.6,TY=1.1;const TR={x:-8,z:-4,h:0,len:1.6,tgt:1.6,hit:false},trl=new THREE.Group();scene.add(trl);
+box(.3,.3,2,0x666666,trl).position.set(0,.9,-1);// tongue (front at local z=0)
+const deck=box(2.6,.3,1,0x1e5bd8,trl);const railL=box(.15,.5,1,0xffd400,trl),railR=box(.15,.5,1,0xffd400,trl);
+const ramp=box(2.4,.15,2.2,0x888888,trl);const tw=wheel(.7,.5,trl,0,.7,0);const fend=box(.8,.15,1.6,0x222222,trl);
+function layTrailer(){const L=TR.len,z0=-2,z1=-2-L;deck.scale.z=L;deck.position.set(0,TY,(z0+z1)/2);
+ for(const[r,x] of[[railL,-1.25],[railR,1.25]]){r.scale.z=L;r.position.set(x,TY+.35,(z0+z1)/2)}
+ const wz=(z0+z1)/2;tw.position.z=wz;fend.position.set(0,TY-.2,wz);ramp.position.set(0,TY/2,z1-1.05);ramp.rotation.x=-Math.atan2(TY,2.2)}
+const tag=new THREE.Mesh(new THREE.PlaneGeometry(3,.8),new THREE.MeshBasicMaterial({color:0xffffff}));
+// ATV (blue)
+const Q={x:8,z:-6,h:Math.PI,v:0,y:0,lock:false,lz:0},atv=new THREE.Group();scene.add(atv);
+box(1.6,.6,2.6,0x1e5bd8,atv).position.y=1;box(.9,.5,1,0x111111,atv).position.set(0,1.45,-.3);box(1.4,.1,.2,0x888888,atv).position.set(0,1.7,.9);
+for(const z of[.9,-.9])for(const sx of[-.85,.85])wheel(.45,.4,atv,sx,.45,z);
+// WALKER
+const W={on:false,x:0,z:0,h:0,y:0,lvl:0},walker=new THREE.Group();scene.add(walker);walker.visible=false;
+box(.8,1,.5,0x1e5bd8,walker).position.y=1.3;const head=new THREE.Mesh(new THREE.SphereGeometry(.38,12,10),M(0xf1c27d));head.position.y=2.2;walker.add(head);
+const legs=[box(.3,.8,.3,0x333366,walker),box(.3,.8,.3,0x333366,walker)];legs[0].position.set(-.2,.4,0);legs[1].position.set(.2,.4,0);
+// HOUSE two story: local x -7..7, z -5..5, open front (z+). stairs x 6->0 at z 2..4.6, upstairs floor x -7..0
+const HX=-30,HZ=-20,FY=3.6,house=new THREE.Group();house.position.set(HX,0,HZ);scene.add(house);
+box(14,.1,10,0xc89a6a,house).position.y=.05;
+box(14,7.4,.3,0xf3e2c0,house).position.set(0,3.7,-5);box(.3,7.4,10,0xf3e2c0,house).position.set(-7,3.7,0);box(.3,7.4,10,0xf3e2c0,house).position.set(7,3.7,0);
+const win=box(.1,1.6,2.4,0x99ddff,house);win.position.set(-6.8,FY+2,-1);box(.12,1.8,.15,0xffffff,house).position.set(-6.8,FY+2,-1);
+const up=box(7,.3,10,0xa0522d,house);up.position.set(-3.5,FY-.15,0);
+const NS=9;for(let i=0;i<NS;i++){const h=(i+1)*FY/NS;box(6/NS,h,2.6,0x9c6b3e,house).position.set(6-(i+.5)*6/NS,h/2,3.3)}
+const bed=new THREE.Group();bed.position.set(-5,FY,-3);house.add(bed);box(2.4,.6,3.6,0x2a7de1,bed).position.y=.3;box(2.4,.4,.8,0xffffff,bed).position.set(0,.8,-1.3);box(2.6,1.6,.3,0x8b5a2b,bed).position.set(0,.8,-1.9);
+const toy=new THREE.Group();toy.position.set(-2,FY,-3.8);house.add(toy);box(2,1.1,1.2,0xff8c00,toy).position.y=.55;box(.5,.5,.5,0xd62828,toy).position.set(-.4,1.35,0);const ball=new THREE.Mesh(new THREE.SphereGeometry(.35,12,10),M(0x16a34a));ball.position.set(.4,1.4,0);toy.add(ball);
+const roof=new THREE.Mesh(new THREE.ConeGeometry(10.5,4,4),M(0x8b2323));roof.rotation.y=Math.PI/4;roof.scale.z=.72;roof.position.set(0,9.4,0);house.add(roof);
+const sign=new THREE.Mesh(new THREE.PlaneGeometry(4,1),new THREE.MeshBasicMaterial({color:0xffd400}));
+// state
+let act='semi';const K={L:0,R:0,G:0,B:0};const $=id=>document.getElementById(id);
+for(const k of['L','R','G','B']){const e=$(k);const on=v=>ev=>{ev.preventDefault();K[k]=v;e.classList.toggle('on',!!v)};e.addEventListener('touchstart',on(1),{passive:false});e.addEventListener('touchend',on(0),{passive:false});e.addEventListener('touchcancel',on(0));e.addEventListener('mousedown',on(1));e.addEventListener('mouseup',on(0));e.addEventListener('mouseleave',on(0))}
+function tap(id,f){const e=$(id);let t=0;e.addEventListener('touchend',ev=>{ev.preventDefault();t=Date.now();f()},{passive:false});e.addEventListener('click',()=>{if(Date.now()-t>500)f()})}
+const km={ArrowLeft:'L',ArrowRight:'R',ArrowUp:'G',ArrowDown:'B'};addEventListener('keydown',e=>{if(km[e.key])K[km[e.key]]=1;if(e.key=='h')hitch();if(e.key=='e')inOut();if(e.key=='g')grow()});addEventListener('keyup',e=>{if(km[e.key])K[km[e.key]]=0});
+let msg='Drive the red semi! 🚛',msgT=3;const say=(s,t=2.5)=>{msg=s;msgT=t};
+const toW=(o,lx,lz)=>({x:o.x+Math.sin(o.h)*lz+Math.cos(o.h)*lx,z:o.z+Math.cos(o.h)*lz-Math.sin(o.h)*lx});
+const toL=(o,x,z)=>{const dx=x-o.x,dz=z-o.z;return{lx:dx*Math.cos(o.h)-dz*Math.sin(o.h),lz:dx*Math.sin(o.h)+dz*Math.cos(o.h)}};
+const dist=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);const semiRear=()=>toW(S,0,-3.3);
+function hitch(){if(act!='semi'){say('Get in the SEMI to hitch');return}
+ if(TR.hit){TR.hit=false;say('Unhooked! 🔓');return}
+ if(dist(semiRear(),TR)<4){TR.hit=true;TR.h=S.h;say('Hitched! Now tap GROW ↔️');if(TR.tgt<FIT)grow()}else say('Back the semi up to the trailer!')}
+function grow(){if(TR.tgt>=FIT){say('Just long enough for the ATV! 🏍️');return}TR.tgt=Math.min(FIT,+(TR.tgt+.6).toFixed(2));say(TR.tgt>=FIT?'BIG ENOUGH! Drive the ATV up! 🏍️':'Stretch! ↔️ '+Math.round((TR.tgt-1.6)/(FIT-1.6)*100)+'%')}
+const V=()=>act=='semi'?S:Q;
+function inOut(){if(!W.on){const v=V();W.on=true;W.lvl=0;W.y=0;const p=toW(v,act=='semi'?2.6:1.8,0);W.x=p.x;W.z=p.z;W.h=v.h;say('Walk around! 🚶 Find the house!')}
+ else{const c=[['semi',dist(W,S)],['atv',dist(W,{x:Q.x,z:Q.z})]].sort((a,b)=>a[1]-b[1])[0];if(c[1]<5&&W.y<.5){W.on=false;act=c[0];say(act=='semi'?'Driving the red semi! 🚛':'Riding the blue ATV! 🏍️')}else say('Walk to the semi or ATV to get IN')}}
+tap('H',hitch);tap('S',inOut);tap('A',grow);
+function drive(o,dt,max){const t=(K.G?1:0)-(K.B?1:0);o.v+=(t*max-o.v)*Math.min(1,dt*(t?1.6:2.5));const s=(K.L?1:0)-(K.R?1:0);if(Math.abs(o.v)>.3)o.h+=s*dt*1.6*Math.sign(o.v);o.x+=Math.sin(o.h)*o.v*dt;o.z+=Math.cos(o.h)*o.v*dt;const r=Math.hypot(o.x,o.z);if(r>150){o.x*=150/r;o.z*=150/r}}
+const inHouse=(x,z)=>{const l={x:x-HX,z:z-HZ};return l.x>-7&&l.x<7&&l.z>-5&&l.z<5};
+function walk(dt){const f=(K.G?1:0)-(K.B?1:0);W.h+=((K.L?1:0)-(K.R?1:0))*dt*2.5;let nx=W.x+Math.sin(W.h)*f*6*dt,nz=W.z+Math.cos(W.h)*f*6*dt;
+ const lx=nx-HX,lz=nz-HZ,inS=lx>=-.2&&lx<6.2&&lz>2&&lz<4.6&&inHouse(nx,nz);
+ if(W.lvl==1){ if(lx>-6.7&&lx<0&&lz>-4.7&&lz<4.7){W.x=nx;W.z=nz;W.y=FY}else if(inS){W.lvl=0;W.x=nx;W.z=nz}}
+ else{const wallHit=inHouse(nx,nz)&&(lx<-6.6||lx>6.6||lz<-4.6);
+  if(!wallHit&&!(lx>-7&&lx<0&&lz>-5&&lz<5&&W.y>.5&&!inS)){W.x=nx;W.z=nz}
+  if(inS){W.y=Math.max(0,(6-lx)/6*FY);if(lx<.1){W.lvl=1;W.y=FY;say('Upstairs! 🛏️🧸')}}else if(!(lx<0&&inHouse(W.x,W.z)&&W.y>.5))W.y=0}
+ walker.position.set(W.x,W.y,W.z);walker.rotation.y=W.h;const mv=f!=0;legs[0].rotation.x=mv?Math.sin(performance.now()/100)*.6:0;legs[1].rotation.x=-legs[0].rotation.x}
+function atvTrailer(){const l=toL(TR,Q.x,Q.z);const z1=-2-TR.len;const onDeck=Math.abs(l.lx)<1.3&&l.lz<-2&&l.lz>z1;const onRamp=Math.abs(l.lx)<1.3&&l.lz<=z1&&l.lz>z1-2.2;
+ if(onRamp)Q.y=TY*(1-(z1-l.lz)/2.2);else if(onDeck){Q.y=TY;
+  if(TR.len>=FIT-.01&&l.lz>z1+1.3&&l.lz<-3.2&&!Q.lock&&Q.v>0&&Math.abs(Math.sin(Q.h-TR.h))<.5){Q.lock=true;Q.v=0;Q.lz=l.lz;Q.h=TR.h;say('LOCKED ON! It barely fits! 🔒🏍️',3)}
+  else if(TR.len<FIT-.01&&l.lz<-2.3&&Math.random()<.02)say('Too short! Tap GROW ↔️')}
+ else Q.y=0}
+let last=performance.now(),started=false;window.__onPlay=()=>{started=true};
+function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;
+ if(Math.abs(TR.tgt-TR.len)>.001){TR.len+=Math.sign(TR.tgt-TR.len)*Math.min(Math.abs(TR.tgt-TR.len),dt*1.2);deck.material.color.setHSL(.6,.75,.45+.1*Math.sin(now/60))}else deck.material.color.set(0x1e5bd8);
+ layTrailer();
+ if(!W.on&&act=='semi')drive(S,dt,14);
+ if(!W.on&&act=='atv'){if(Q.lock&&K.B){Q.lock=false;say('Backing off the trailer!')}if(!Q.lock){drive(Q,dt,9);atvTrailer()}}
+ if(TR.hit){const r=semiRear();const dx=TR.x-r.x,dz=TR.z-r.z;const d=Math.hypot(dx,dz);if(d>0.01){TR.h=Math.atan2(-dx,-dz)}TR.x=r.x;TR.z=r.z}
+ if(Q.lock){const p=toW(TR,0,Q.lz);Q.x=p.x;Q.z=p.z;Q.h=TR.h;Q.y=TY;Q.v=0}
+ if(W.on)walk(dt);walker.visible=W.on;
+ semi.position.set(S.x,0,S.z);semi.rotation.y=S.h;trl.position.set(TR.x,0,TR.z);trl.rotation.y=TR.h;atv.position.set(Q.x,Q.y,Q.z);atv.rotation.y=Q.h;
+ const inside=W.on&&inHouse(W.x,W.z);roof.visible=!inside;up.visible=!(inside&&W.lvl==0&&W.y<1);
+ let cx,cy,cz,lx,ly,lz;
+ if(window.__camOv){[cx,cy,cz,lx,ly,lz]=window.__camOv()}
+ else if(W.on){if(inside){cx=W.x;cy=W.y+(W.lvl?6:9);cz=W.z+7;lx=W.x;ly=W.y+1;lz=W.z-1}else{cx=W.x-Math.sin(W.h)*8;cy=W.y+5;cz=W.z-Math.cos(W.h)*8;lx=W.x;ly=W.y+1.5;lz=W.z}}
+ else{const o=V(),b=act=='semi'?16:9;cx=o.x-Math.sin(o.h)*b;cy=act=='semi'?9:5;cz=o.z-Math.cos(o.h)*b;lx=o.x;ly=1.5;lz=o.z}
+ cam.position.lerp(new THREE.Vector3(cx,cy,cz),window.__camOv?1:.12);cam.lookAt(lx,ly,lz);
+ $('S').textContent=W.on?(Math.min(dist(W,S),dist(W,Q))<5?'IN '+(dist(W,S)<dist(W,Q)?'🚛':'🏍️'):'IN'):'OUT 🚶';
+ $('H').textContent=TR.hit?'UNHOOK 🔓':'HITCH 🔗';
+ if(msgT>0)msgT-=dt;$('hud').textContent=msgT>0?msg:('Trailer: '+(TR.len>=FIT-.01?'BIG ✅':Math.round((TR.len-1.6)/(FIT-1.6)*100)+'%'));
+ R.render(scene,cam);requestAnimationFrame(loop)}
+layTrailer();requestAnimationFrame(loop);
+window.__g={S,TR,Q,W,K,FIT,HX,HZ,FY,hitch,grow,inOut,get act(){return act},set act(v){act=v},cam};
+</script></body></html>
